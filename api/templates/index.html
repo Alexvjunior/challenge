@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,20 +10,25 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+
         form {
             max-width: 400px;
             margin: auto;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
         }
-        select, input {
+
+        select,
+        input {
             width: 100%;
             padding: 8px;
             margin-bottom: 16px;
             box-sizing: border-box;
         }
+
         button {
             background-color: #4CAF50;
             color: white;
@@ -33,9 +39,10 @@
         }
     </style>
 </head>
+
 <body>
     <h2>API Translation</h2>
-    <form id="translationForm">
+    <form id="translationForm" enctype="multipart/form-data">
         <label for="sourceLanguage">Source Language:</label>
         <select id="sourceLanguage" name="sourceLanguage">
             <option value="en">English</option>
@@ -89,7 +96,9 @@
         <label for="audioFile">Audio File:</label>
         <input type="file" id="audioFile" name="audioFile" accept=".mp3, .wav">
 
-        <button type="button" onclick="translateAudio()">Translate</button>
+        <!-- <button type="button" onclick="translateAudio()">Translate</button> -->
+        <button type="submit">Translate</button>
+
     </form>
 
     <div id="result">
@@ -119,4 +128,5 @@
         }
     </script>
 </body>
+
 </html>

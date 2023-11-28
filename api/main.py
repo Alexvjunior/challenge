@@ -34,14 +34,6 @@ class TranslationRequest(BaseModel):
     target_language: str
     audio_file: UploadFile
 
-    @validator("audio_file")
-    def validate_audio_type(cls, value):
-        allowed_extensions = ('.mp3', '.wav')
-        if not value.filename.lower().endswith(allowed_extensions):
-            raise ValueError(
-                "Unsupported audio format. Please send an MP3 or WAV file.")
-        return value
-
 
 @app.post("/translate/")
 async def translate_audio(request: TranslationRequest) -> JSONResponse:
@@ -76,7 +68,13 @@ def convert_text_to_audio(text: str) -> gTTS:
     audio_response = gTTS(text, lang='en')
     return audio_response
 
+class Item(BaseModel):
+    target_language: str
+
+@app.post("/echo/")
+async def create_item(item: Item):
+    return {"message": f"Received item with name: {item.name}"}
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run(app, host="127.0.0.1", port=8080)
