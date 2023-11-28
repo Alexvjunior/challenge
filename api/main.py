@@ -4,10 +4,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from googletrans import Translator
 from gtts import gTTS
 from pydantic import BaseModel, validator
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from typing import Union
+import os
 
 app = FastAPI()
+templates_dir = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), "templates")
+
+app.mount("/", StaticFiles(directory=templates_dir, html=True), name="static")
 
 app.add_middleware(
     CORSMiddleware,
@@ -16,6 +22,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/", response_class=HTMLResponse)
+async def read_root():
+    return open("templates/index.html", "r").read()
 
 
 class TranslationRequest(BaseModel):
@@ -34,19 +45,20 @@ class TranslationRequest(BaseModel):
 
 @app.post("/translate/")
 async def translate_audio(request: TranslationRequest) -> JSONResponse:
-    transcribed_text = transcribe_audio(request.audio_file)
+    transcribed_text = transcribe_audio(request.audio_file, request.source_language)
     translated_text = translate_text(transcribed_text, request.target_language)
     audio_response = convert_text_to_audio(translated_text)
 
     return {"translation": translated_text, "audio_response": audio_response}
 
 
-def transcribe_audio(audio_file: UploadFile) -> Union[str, None]:
+def transcribe_audio(audio_file: UploadFile, source_language: str) -> Union[str, None]:
     recognizer = sr.Recognizer()
 
     try:
         with sr.AudioFile(audio_file.file) as source:
-            audio_text = recognizer.recognize_google(source, language='en-US')
+            audio_text = recognizer.recognize_google(
+                source, language=source_language)
             return audio_text
     except sr.UnknownValueError:
         raise ValueError("Unable to transcribe audio")
