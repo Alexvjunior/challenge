@@ -57,11 +57,49 @@
             font-size: 20px;
             color: black;
         }
-        
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 
 <body>
+
+
+
     <h2>API Translation</h2>
     <form id="translationForm" enctype="multipart/form-data" method="post">
         <label for="sourceLanguage">Source Language:</label>
@@ -117,9 +155,15 @@
 
         <button type="button" onclick="translateAudio()">Translate</button>
 
+
+
     </form>
 
-    <div id="result">
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+            <p id="message"></p>
+        </div>
     </div>
 
     <div id="downloadLink" style="display: none;">
@@ -132,6 +176,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+
+        function showModal(message) {
+            document.getElementById('message').textContent = message;
+            document.getElementById('myModal').style.display = 'block';
+        }
+
         function translateAudio() {
             const loadingElement = document.getElementById('loading');
             loadingElement.style.display = 'block';
@@ -153,17 +203,19 @@
             })
                 .then(response => {
 
-                    
+
                     const downloadButton = document.getElementById('downloadButton');
                     downloadButton.href = `http://0.0.0.0:8000/download/`;
 
                     downloadButton.click();
 
                     loadingElement.style.display = 'none';
+                    showModal("Successful translation: " + response.data.translation);
                 })
                 .catch(error => {
                     console.error('Error translating audio:', error);
                     loadingElement.style.display = 'none';
+                    showModal("Erro ao traduzir: " + error);
                 });
         }
     </script>

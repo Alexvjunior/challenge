@@ -49,7 +49,7 @@ async def translate_audio(
     convert_text_to_audio(translated_text, target_language)
 
 
-    return JSONResponse(content={"translator":"translated_text"}, status_code=200)
+    return JSONResponse(content={"translation":translated_text}, status_code=200)
 
 @app.get("/download")
 async def translate_audio() -> JSONResponse:
