@@ -4,6 +4,7 @@ EXPOSE 8000
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV OPENAI_API_KEY='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'
 
 RUN apt-get update && apt-get install -y libpq-dev gcc
 

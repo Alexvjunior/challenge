@@ -37,12 +37,33 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
+        #loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+        }
+
+        .loading-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: black;
+        }
+        
     </style>
 </head>
 
 <body>
     <h2>API Translation</h2>
-    <form id="translationForm" enctype="multipart/form-data">
+    <form id="translationForm" enctype="multipart/form-data" method="post">
         <label for="sourceLanguage">Source Language:</label>
         <select id="sourceLanguage" name="sourceLanguage">
             <option value="en">English</option>
@@ -52,7 +73,6 @@
             <option value="hi">Hindi</option>
             <option value="ar">Arabic</option>
             <option value="pt">Portuguese</option>
-            <option value="pt-BR">Portuguese (Brazil)</option>
             <option value="bn">Bengali</option>
             <option value="ru">Russian</option>
             <option value="ja">Japanese</option>
@@ -77,7 +97,6 @@
             <option value="hi">Hindi</option>
             <option value="ar">Arabic</option>
             <option value="pt">Portuguese</option>
-            <option value="pt-BR">Portuguese (Brazil)</option>
             <option value="bn">Bengali</option>
             <option value="ru">Russian</option>
             <option value="ja">Japanese</option>
@@ -96,34 +115,55 @@
         <label for="audioFile">Audio File:</label>
         <input type="file" id="audioFile" name="audioFile" accept=".mp3, .wav">
 
-        <!-- <button type="button" onclick="translateAudio()">Translate</button> -->
-        <button type="submit">Translate</button>
+        <button type="button" onclick="translateAudio()">Translate</button>
 
     </form>
 
     <div id="result">
-        <!-- Translation result will be displayed here -->
+    </div>
+
+    <div id="downloadLink" style="display: none;">
+        <a id="downloadButton" download="translated_audio.mp3" hidden>Download Translated Audio</a>
+    </div>
+
+    <div id="loading">
+        <div class="loading-text">Loading...</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         function translateAudio() {
+            const loadingElement = document.getElementById('loading');
+            loadingElement.style.display = 'block';
+
             const sourceLanguage = document.getElementById('sourceLanguage').value;
             const targetLanguage = document.getElementById('targetLanguage').value;
             const audioFile = document.getElementById('audioFile').files[0];
 
             const formData = new FormData();
-            formData.append('source_language', sourceLanguage);
-            formData.append('target_language', targetLanguage);
             formData.append('audio_file', audioFile);
 
-            axios.post('http://localhost:8000/translate/', formData)
+            const url = `http://0.0.0.0:8000/translate?source_language=${sourceLanguage}&target_language=${targetLanguage}`;
+
+            axios.post(url, formData, {
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
                 .then(response => {
-                    const resultDiv = document.getElementById('result');
-                    resultDiv.innerHTML = `<p>Translation: ${response.data.translation}</p>`;
+
+                    
+                    const downloadButton = document.getElementById('downloadButton');
+                    downloadButton.href = `http://0.0.0.0:8000/download/`;
+
+                    downloadButton.click();
+
+                    loadingElement.style.display = 'none';
                 })
                 .catch(error => {
                     console.error('Error translating audio:', error);
+                    loadingElement.style.display = 'none';
                 });
         }
     </script>
