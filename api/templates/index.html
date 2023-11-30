@@ -210,12 +210,12 @@
                     downloadButton.click();
 
                     loadingElement.style.display = 'none';
-                    showModal("Successful translation: " + response.data.translation);
+                    showModal("Successful translation: " + response.data.message);
                 })
                 .catch(error => {
                     console.error('Error translating audio:', error);
                     loadingElement.style.display = 'none';
-                    showModal("Erro ao traduzir: " + error);
+                    showModal('Error translating audio ', error);
                 });
         }
     </script>
