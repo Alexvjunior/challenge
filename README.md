@@ -1,6 +1,6 @@
 # Challenge API
 
-API Challenge
+The main aim of this project is to develop a voice assistant platform capable of understanding and translating into multiple languages. The platform should process audio inputs, translate, and convert back to the user via Text-to-Speech (TTS) technology. This multilingual capability would cater to a diverse user base and find applications in customer service, education, and accessibility solutions. With this platform, users can communicate in their preferred language, and the system will translate and provide a real-time response, making communication more accessible and efficient in various contexts.
 
 ## **Requiriments**
 - Docker
@@ -67,7 +67,7 @@ make security
 
 ## **Swagger API Documentation**
 
-The project includes Swagger for API documentation. After starting the containers, you can access the Swagger UI at [http://localhost:8080/docs/](http://localhost:8080/docs/) or [http://localhost:8080/redoc/](http://localhost:8080/redoc/).
+The project includes Swagger for API documentation. After starting the containers, you can access the Swagger UI at [http://localhost:8000/docs/](http://localhost:8000/docs/) or [http://localhost:8000/redoc/](http://localhost:8000/redoc/).
 
 ## **Available Makefile Commands**
 The project includes a Makefile with several useful commands:
@@ -80,7 +80,7 @@ The project includes a Makefile with several useful commands:
 
 ## **API Endpoints**
 
-### Endpoint 1: `/role/{role_id}`
+### Endpoint 1: `/`
 
 #### Método HTTP:
 `GET`
@@ -88,13 +88,32 @@ The project includes a Makefile with several useful commands:
 
 ### Response
 `200`
+
+
+### Endpoint 2: `/translate`
+
+#### Método HTTP:
+`POST`
+
+### Payload
 ```json
 {
-  "id": 0,
-  "description": "string"
+  "source_language": "string",
+  "target_language": "string",
+  "audio_file": <File Object>,
 }
 ```
-`422`
+
+
+### Response
+
+`200`
+```json
+{
+  "message": "string",
+}
+```
+`500`
 ```json
 {
   "detail": [
@@ -109,47 +128,21 @@ The project includes a Makefile with several useful commands:
   ]
 }
 ```
-`404`
-```json
-{
-  "detail": "Role not found"
-}
-```
 
-### Endpoint 2: `/users/`
+### Endpoint 3: `/Download`
 
 #### Método HTTP:
-`POST`
+`GET`
 
-### Payload
-```json
-{
-  "name": "string",
-  "email": "string",
-  "role_id": 0,
-  "password": "string"
-}
-```
 
 
 ### Response
 
 `200`
-```json
-{
-  "name": "string",
-  "email": "string",
-  "role_id": 0,
-  "password": "string"
-}
+```file
+<File Object>
 ```
-`400`
-```json
-{
-  "detail": "Role not found"
-}
-```
-`422`
+`500`
 ```json
 {
   "detail": [

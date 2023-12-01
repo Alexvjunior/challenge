@@ -32,4 +32,7 @@ clean:
 security: venv
 	safety check
 
+test: venv
+	pytest -vv -x --cov=app --cov-fail-under=79
+
 .PHONY: venv format lint test run clean
