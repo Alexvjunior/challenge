@@ -6,3 +6,6 @@
 **/.git
 audio.mp3
 .pytest_cache
+.vscode
+.coverage
+coverage

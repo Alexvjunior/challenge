@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from typing import Union
 
-import speech_recognition as sr
 from deep_translator import GoogleTranslator
 from dotenv import load_dotenv
 from fastapi import UploadFile
@@ -21,7 +20,8 @@ client = OpenAI(
     api_key=os.environ.get(os.getenv("OPENAI_API_KEY")),
 )
 
-audio_file_path = (Path(__file__).resolve().parent.parent.parent / "audio.mp3").resolve()
+audio_file_path = (Path(__file__).resolve(
+).parent.parent.parent / "audio.mp3").resolve()
 
 
 def transcribe_audio(audio_file: UploadFile) -> Union[str, None]:
@@ -47,11 +47,15 @@ def __write_file_audio(audio_file: UploadFile) -> None:
 
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(3))
 def __convert_audio_to_text_api(audio_file) -> str:
-    return client.audio.transcriptions.create(
+    print("__convert_audio_to_text_api")
+    try:
+        return client.audio.transcriptions.create(
         model="whisper-1",
         file=audio_file,
         response_format="text"
     )
+    except Exception as e:
+        print(f"ERROR: {str(e)}")
 
 
 def translate_text(
