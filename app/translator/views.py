@@ -32,7 +32,6 @@ async def translate_audio(
 
     try:
         transcribed_text = service.transcribe_audio(audio_file)
-        print("transcribed_text")
         translated_text = service.translate_text(
             transcribed_text,
             target_language,
