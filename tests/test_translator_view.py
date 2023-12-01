@@ -17,6 +17,15 @@ def test_read_main_template_not_found():
     with mock.patch('app.translator.service.get_initial_template', side_effect=FileNotFoundError("Template not Found")):
         response = client.get("/")
         assert response.status_code == 404
+        assert response.json() == {'detail': 'Template not found'}
+
+
+def test_read_main_template_internal_error():
+    with mock.patch('app.translator.service.get_initial_template', side_effect=Exception("Error")):
+        response = client.get("/")
+        assert response.status_code == 500
+        assert response.json() == {
+            'detail': 'Internal Erro with Template: Error'}
 
 
 def test_translate_audio_not_send_file():
@@ -42,8 +51,6 @@ def test_translate_audio_not_allowed():
 
 def test_download_audio_not_allowed():
 
-    url = f"/download"
-
     response = client.post(f"/download")
 
     assert response.status_code == 405
@@ -51,11 +58,11 @@ def test_download_audio_not_allowed():
 
 
 def test_download_audio_file_not_found():
-    with mock.patch('os.path.exists', return_value=False):
+    with mock.patch('pathlib.Path.exists', return_value=False):
         response = client.get(f"/download")
         assert response.status_code == 500
         assert response.json() == {
-            'detail': 'File at path audio.mp3 does not exist.'
+            'detail': 'Internal Erro Download audio: File at path audio.mp3 does not exist.'
         }
 
 
@@ -71,10 +78,10 @@ def test_download_audio_success():
 
 def test_download_audio_raises_exception():
 
-    with mock.patch('os.path.exists', return_value=True):
+    with mock.patch('pathlib.Path.exists', return_value=True):
         with mock.patch('app.translator.service.__get_audio_file', side_effect=Exception("File at path audio.mp3 does not exist.")):
             response = client.get("/download")
             assert response.status_code == 500
             assert response.json() == {
-                'detail': 'Error in download audio: File at path audio.mp3 does not exist.'
+                'detail': 'Internal Erro Download audio: Error in download audio: File at path audio.mp3 does not exist.'
             }
