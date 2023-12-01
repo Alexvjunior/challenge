@@ -2,7 +2,7 @@
 from fastapi import APIRouter, File, HTTPException, Query, UploadFile, status
 from fastapi.responses import HTMLResponse, JSONResponse
 
-from app.translator import service
+from apps.translator import service
 
 router = APIRouter()
 

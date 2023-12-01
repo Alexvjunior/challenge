@@ -3,13 +3,13 @@ from unittest.mock import mock_open
 
 import pytest
 
-from app.translator import service
+from apps.translator import service
 
 
 def test_transcribe_audio_exception_write_audio():
 
     with mock.patch(
-        'app.translator.service.__write_file_audio',
+        'apps.translator.service.__write_file_audio',
         side_effect=Exception("Problems for write file audio")
     ):
         with pytest.raises(
@@ -20,18 +20,18 @@ def test_transcribe_audio_exception_write_audio():
 
 
 def test_transcribe_audio_exception_convert_audio_to_text_api():
-    with mock.patch('app.translator.service.__write_file_audio', return_value=None):
+    with mock.patch('apps.translator.service.__write_file_audio', return_value=None):
         with mock.patch("pathlib.Path.open", mock_open(read_data=b'')):
-            with mock.patch('app.translator.service.__convert_audio_to_text_api', side_effect=Exception("Problems for conect to API")):
+            with mock.patch('apps.translator.service.__convert_audio_to_text_api', side_effect=Exception("Problems for conect to API")):
                 with pytest.raises(Exception) as exc_info:
                     service.transcribe_audio(b'')
     assert str(exc_info.value) == "Internal error: Problems for conect to API"
 
 
 def test_transcribe_audio_success():
-    with mock.patch('app.translator.service.__write_file_audio', return_value=None):
+    with mock.patch('apps.translator.service.__write_file_audio', return_value=None):
         with mock.patch("pathlib.Path.open", mock_open(read_data=b'')):
-            with mock.patch('app.translator.service.__convert_audio_to_text_api', return_value="test"):
+            with mock.patch('apps.translator.service.__convert_audio_to_text_api', return_value="test"):
                 assert service.transcribe_audio(b'') == "test"
 
 
@@ -63,7 +63,7 @@ def test_download_audio_exception_not_exists_file():
 
 def test_download_audio_exception_get_audio_file():
     with mock.patch('pathlib.Path.exists', return_value=True):
-        with mock.patch('app.translator.service.__get_audio_file', side_effect=Exception("File at path audio.mp3 does not exist.")):
+        with mock.patch('apps.translator.service.__get_audio_file', side_effect=Exception("File at path audio.mp3 does not exist.")):
             with pytest.raises(Exception) as exc_info:
                 service.download_audio()
 
@@ -72,7 +72,7 @@ def test_download_audio_exception_get_audio_file():
 
 
 def test_get_template_exception_not_fount():
-    with mock.patch('app.translator.service.get_initial_template', side_effect=Exception("Template not Found")):
+    with mock.patch('apps.translator.service.get_initial_template', side_effect=Exception("Template not Found")):
         with pytest.raises(Exception) as exc_info:
             service.get_initial_template()
 
